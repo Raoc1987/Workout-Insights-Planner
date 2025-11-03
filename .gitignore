@@ -6,3 +6,6 @@ src/workout_insights/__pycache__
 >>>>>>> bbc0355 (chore: ignorar checkpoints e caches)
 __pycache__/
 *.pyc
+*.ipynb_checkpoints/
+__pycache__/
+*.pyc
