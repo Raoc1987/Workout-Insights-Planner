@@ -1,0 +1,4 @@
+notebooks/.ipynb_checkpoints/
+src/workout_insights/__pycache__
+__pycache__/
+*.pyc
