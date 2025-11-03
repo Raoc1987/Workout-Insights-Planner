@@ -19,3 +19,6 @@ __pycache__/
 __pycache__/
 *.pyc
 docs/01_eda_executed.ipynb
+*.ipynb_checkpoints/
+__pycache__/
+*.pyc
