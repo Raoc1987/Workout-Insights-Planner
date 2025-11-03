@@ -11,25 +11,17 @@ jobs:
     env:
       PYTHONPATH: ${{ github.workspace }}/src
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
       - name: Install deps
         run: |
           pip install pandas matplotlib seaborn pydantic jupyter nbconvert
-
       - name: Ensure docs dir
         run: mkdir -p docs
-
       - name: Execute EDA
         run: |
           jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb --output docs/01_eda_executed.ipynb
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
