@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 notebooks/.ipynb_checkpoints/
 src/workout_insights/__pycache__
+=======
+*.ipynb_checkpoints/
+>>>>>>> bbc0355 (chore: ignorar checkpoints e caches)
 __pycache__/
 *.pyc
