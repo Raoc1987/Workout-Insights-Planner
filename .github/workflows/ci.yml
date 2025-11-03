@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -19,8 +21,11 @@ jobs:
 
       - name: Install deps
         run: |
-          pip install -e .
           pip install pandas matplotlib seaborn pydantic jupyter nbconvert
+
+      - name: Ensure docs dir
+        run: |
+          mkdir -p docs
 
       - name: Execute EDA
         run: |
@@ -35,3 +40,4 @@ jobs:
             docs/recommendations.csv
             docs/eda_volume_semanais.png
             docs/01_eda_executed.ipynb
+          if-no-files-found: warn
