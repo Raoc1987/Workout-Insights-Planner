@@ -50,3 +50,6 @@ docs/01_eda_executed.ipynb
 notebooks/01_eda.nbconvert.ipynb
 notebooks/docs/
 notebooks/data/
+*.ipynb_checkpoints/
+__pycache__/
+*.pyc
