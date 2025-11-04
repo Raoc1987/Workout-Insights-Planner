@@ -13,24 +13,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
+          python-version: "3.13"
       - name: Install dependencies
         run: |
           pip install pandas matplotlib seaborn pydantic jupyter nbconvert
-
       - name: Ensure docs directory
         run: mkdir -p docs
-
       - name: Execute EDA notebook
         run: |
-          jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb \
+          jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb ^
             --output 01_eda_executed.ipynb --output-dir=docs
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
