@@ -13,19 +13,47 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.11"
+
       - name: Install dependencies
+        shell: bash
         run: |
-          pip install pandas matplotlib seaborn pydantic jupyter nbconvert
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install pandas matplotlib seaborn pydantic jupyter nbconvert
+          fi
+
       - name: Ensure docs directory
         run: mkdir -p docs
+
+      # Opcional: criar CSV de exemplo se não existir
+      - name: Seed example CSV if missing
+        shell: python
+        run: |
+          from pathlib import Path
+          import pandas as pd
+          root = Path.cwd()
+          data_raw = root / "data" / "raw"
+          data_raw.mkdir(parents=True, exist_ok=True)
+          csv = data_raw / "example_workouts_and_planner.csv"
+          if not csv.exists():
+            df = pd.DataFrame([
+              {"date":"2025-10-01","exercise":"Bench Press","sets":3,"reps":8,"weight_kg":80,"muscle_group":"chest"},
+              {"date":"2025-10-02","exercise":"Squat","sets":5,"reps":5,"weight_kg":120,"muscle_group":"legs"},
+              {"date":"2025-10-04","exercise":"Deadlift","sets":3,"reps":5,"weight_kg":140,"muscle_group":"back"},
+            ])
+            df.to_csv(csv, index=False)
+
       - name: Execute EDA notebook
         run: |
-          jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb ^
+          jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb \
             --output 01_eda_executed.ipynb --output-dir=docs
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
