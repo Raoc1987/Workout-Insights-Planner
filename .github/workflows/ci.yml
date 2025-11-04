@@ -19,17 +19,18 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        shell: bash
-        run: |
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            pip install pandas matplotlib seaborn pydantic jupyter nbconvert
-          fi
+  - name: Install dependencies (with fallback)
+  shell: bash
+  run: |
+    if [ -f requirements.txt ]; then
+      pip install -r requirements.txt
+    else
+      pip install pandas matplotlib seaborn pydantic jupyter nbconvert
+    fi
 
-      - name: Ensure docs directory
-        run: mkdir -p docs
+- name: Ensure docs directory
+  run: mkdir -p docs
+
 
       # Opcional: criar CSV de exemplo se não existir
       - name: Seed example CSV if missing
@@ -49,18 +50,18 @@ jobs:
             ])
             df.to_csv(csv, index=False)
 
-      - name: Execute EDA notebook
-        run: |
-          jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb \
-            --output 01_eda_executed.ipynb --output-dir=docs
+     - name: Execute EDA notebook (nbconvert → docs/)
+  run: |
+    jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb \
+      --output 01_eda_executed.ipynb --output-dir=docs
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: docs-artifacts
-          path: |
-            docs/weekly_metrics.csv
-            docs/recommendations.csv
-            docs/eda_volume_semanais.png
-            docs/01_eda_executed.ipynb
-          if-no-files-found: warn
+- name: Upload artifacts (docs/)
+  uses: actions/upload-artifact@v4
+  with:
+    name: docs-artifacts
+    path: |
+      docs/weekly_metrics.csv
+      docs/recommendations.csv
+      docs/eda_volume_semanais.png
+      docs/01_eda_executed.ipynb
+    if-no-files-found: warn
