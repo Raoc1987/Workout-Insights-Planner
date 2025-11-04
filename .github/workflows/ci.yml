@@ -10,30 +10,32 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PYTHONPATH: ${{ github.workspace }}/src
+
     steps:
-      - name: Checkout
+      - name: 00) Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: 01) Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-  - name: Install dependencies (with fallback)
-  shell: bash
-  run: |
-    if [ -f requirements.txt ]; then
-      pip install -r requirements.txt
-    else
-      pip install pandas matplotlib seaborn pydantic jupyter nbconvert
-    fi
+      - name: 02) Install dependencies (pip-only, with fallback)
+        shell: bash
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install pandas matplotlib seaborn pydantic jupyter nbconvert
+          fi
+          python -V
+          pip -V
+          python -c "import jupyter, nbconvert; print('OK jupyter:', jupyter.__version__, 'nbconvert:', nbconvert.__version__)"
 
-- name: Ensure docs directory
-  run: mkdir -p docs
+      - name: 03) Ensure docs directory
+        run: mkdir -p docs
 
-
-      # Opcional: criar CSV de exemplo se não existir
-      - name: Seed example CSV if missing
+      - name: 04) Seed example CSV if missing
         shell: python
         run: |
           from pathlib import Path
@@ -49,19 +51,23 @@ jobs:
               {"date":"2025-10-04","exercise":"Deadlift","sets":3,"reps":5,"weight_kg":140,"muscle_group":"back"},
             ])
             df.to_csv(csv, index=False)
+          print('CSV:', csv.exists(), csv)
 
-     - name: Execute EDA notebook (nbconvert → docs/)
-  run: |
-    jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb \
-      --output 01_eda_executed.ipynb --output-dir=docs
+      - name: 05) Execute EDA notebook (nbconvert → docs/)
+        run: |
+          jupyter nbconvert --to notebook --execute notebooks/01_eda.ipynb \
+            --output 01_eda_executed.ipynb --output-dir=docs
 
-- name: Upload artifacts (docs/)
-  uses: actions/upload-artifact@v4
-  with:
-    name: docs-artifacts
-    path: |
-      docs/weekly_metrics.csv
-      docs/recommendations.csv
-      docs/eda_volume_semanais.png
-      docs/01_eda_executed.ipynb
-    if-no-files-found: warn
+      - name: 06) List produced artifacts (docs/)
+        run: ls -la docs || true
+
+      - name: 07) Upload artifacts (docs/)
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-artifacts
+          path: |
+            docs/weekly_metrics.csv
+            docs/recommendations.csv
+            docs/eda_volume_semanais.png
+            docs/01_eda_executed.ipynb
+          if-no-files-found: warn
